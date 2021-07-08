@@ -1,0 +1,25 @@
+class Solution {
+    public int maxArea(int h, int w, int[] horizontalCuts, int[] verticalCuts) {
+        Arrays.sort(horizontalCuts);
+        Arrays.sort(verticalCuts);
+        
+        //careful！ overflow!
+        long maxHori = Long.valueOf(horizontalCuts[0]);
+        long maxVerti = Long.valueOf(verticalCuts[0]);
+        for(int i = 1 ; i< horizontalCuts.length; i++){
+            maxHori = Math.max(maxHori, horizontalCuts[i] - horizontalCuts[i - 1]);
+        }
+       
+        maxHori = Math.max(maxHori, h - horizontalCuts[horizontalCuts.length-1]);
+        
+        for(int i = 1 ; i< verticalCuts.length; i++){
+             maxVerti = Math.max(maxVerti, verticalCuts[i] - verticalCuts[i - 1]);
+        }
+
+        
+        maxVerti = Math.max(maxVerti, w - verticalCuts[verticalCuts.length-1]);
+        
+        
+        return (int) ((maxHori * maxVerti) % (1000000007)) ;
+    }
+}
