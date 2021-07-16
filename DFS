@@ -1,0 +1,25 @@
+1448. Count Good Nodes in Binary Tree
+解题思路分析：
+
+这是一道典型使用dfs解决二叉树问题的题目。利用dfs深度优先搜索来递归遍历二叉树的每一个节点，并且在递归函数的参数中传入当前路径中的最大值max。如果当前节点大于等于max，
+说明当前节点属于一个好节点，当前递归的返回结果为1，同时更新max为当前节点。然后dfs递归至其左右两个子节点，并将递归结果累加至当前递归的返回结果。
+
+public int goodNodes(TreeNode root) {
+    return dfs(root,root.val); // dfs求解
+}
+// root：当前节点
+// max：当前路径中最大值
+int dfs(TreeNode root, int max){
+    int res=0; // 返回结果
+    if(root.val>=max){ // 如果当前节点大于等于max
+        res=1; // 当前节点是一个好节点
+        max=root.val; // 更新max值
+    }
+    if(root.left!=null){ // dfs递归至左子节点
+        res+=dfs(root.left,max);
+    }
+    if(root.right!=null){ // dfs递归至右子节点
+        res+=dfs(root.right,max);
+    }
+    return res;
+}
