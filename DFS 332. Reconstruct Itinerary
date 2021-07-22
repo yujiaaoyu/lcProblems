@@ -1,0 +1,52 @@
+To summarize, the main idea to find the Eulerian path consists of two steps:
+
+Step 1). Starting from any vertex, we keep following the unused edges until we get stuck at certain vertex where we have no more unvisited outgoing edges.
+
+Step 2). We then backtrack to the nearest neighbor vertex in the current path that has unused edges and we repeat the process until all the edges have been used.
+
+class Solution {
+  // origin -> list of destinations
+  HashMap<String, LinkedList<String>> flightMap = new HashMap<>();
+  LinkedList<String> result = null;
+
+  public List<String> findItinerary(List<List<String>> tickets) {
+    // Step 1). build the graph first
+       for(List<String> ticket : tickets) {
+          String origin = ticket.get(0);
+          String dest = ticket.get(1);
+          if(!flightMap.containsKey(origin)){
+              LinkedList<String> destlist = new LinkedList<>();
+              destlist.add(dest);
+            flightMap.put(origin, destlist);
+          }
+          else{
+               LinkedList<String> destlist =  flightMap.get(origin);
+              destlist.add(dest);
+            // flightMap.put(origin, destlist);
+          }
+      }
+   
+    // Step 2). order the destinations
+   flightMap.forEach((key, value) -> Collections.sort(value));
+       this.result = new LinkedList<String>();
+    // Step 3). post-order DFS
+        DFS("JFK");
+      return result;
+  }
+
+  protected void DFS(String origin) {
+    // Visit all the outgoing edges first.
+      if(this.flightMap.containsKey(origin)){
+        LinkedList <String> destlist = this.flightMap.get(origin);
+        while(!destlist.isEmpty()){
+            String tempfirst = destlist.getFirst();
+            destlist.removeFirst();
+            DFS(tempfirst);
+        }
+      }
+      result.offerFirst(origin);
+     
+    // add the airport to the head of the itinerary
+  
+  }
+}
