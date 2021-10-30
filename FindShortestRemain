@@ -3,87 +3,50 @@ import java.util.ArrayList;
 2. 给字符串,删两次，求最短字符串，删除的规矩必须是连续的字符串，aabcccbb,先删ccc然后删bbb，最短2，返回2。
 aa‍‍baa，返回0，先删b，然后删a，删光。
 */
-public class GetShortestRemains {
-    static class Node{
-        char ch;
-        int times;
-        public Node(char ch, int times ){
-            this.ch = ch;
-            this.times = times;
-        }
-    }
-    public static String findSolution(String str){
-        int p = 0;
-        ArrayList<Node> list = new ArrayList<>();
-        //build Node and put into list
-        while(p < str.length()){
-            char ch = str.charAt(p);
-            int end = p;
-            while(end < str.length() && str.charAt(end) == ch){
-                end++;
-            }
-            Node node = new Node(ch,end - p);
+public static int second(String s) {
+    int maxLen = 0;
+    int start = 0;
+    List<Node> list = new ArrayList<>();
+
+    for (int i = 1; i < s.length(); i++) { //"aa b ccc bb"
+        char c = s.charAt(i);
+        if (c != s.charAt(start)) {
+            Node node = new Node();
+            node.val = s.charAt(start);
+            node.len = i - start;
             list.add(node);
-            p = end;
+            start = i;
         }
-        int tempMax = 0;
-        int index = 0;
-        //first round, find the longest segment and remove the longest one
-        for(int i = 0; i< list.size(); i++){
-            Node node = list.get(i);
-            int times = node.times;
-            if(times >= tempMax){
-                tempMax = Math.max(tempMax, times);
-                index = i;
-            }
-        }
-        list.remove(index);
-        tempMax = 0;
-        int pointer = 0;
-        index = 0;
-        // second round, check if there is any overlap, find the longest segment again, remove it
-        while(pointer < list.size()-1){
-            Node node = list.get(pointer);
-            Node nextNode = list.get(pointer+1);
-            if(node.ch == nextNode.ch){
-                int newTimes = node.times+ nextNode.times;
-                Node newNode = new Node(node.ch, newTimes);
-                list.set(pointer, newNode);
-                list.remove(pointer+1);
-                if(newTimes > tempMax){
-                    tempMax = newTimes;
-                    index = pointer;
-                }
-            }
-            else{
-                int curTimes = node.times;
-                if(curTimes > tempMax){
-                    tempMax = curTimes;
-                    index = pointer;
-                }
-                pointer++;
-            }
-        }
-        list.remove(index);
-        StringBuilder sb = new StringBuilder();
-        for(Node node: list){
-            sb.append(helper(node.ch, node.times));
-        }
-        return sb.toString();
     }
 
-    private static String helper(char ch, int times){
-        StringBuilder sb = new StringBuilder();
-        int time = 0;
-        while(time < times){
-            sb.append(ch);
-            time++;
+    Node node = new Node();
+    node.val = s.charAt(start);
+    node.len = s.length() - start;
+    list.add(node);
+
+    int firstMax = 0;
+    int secondMax = 0;
+
+    for (Node n : list) {
+        int cur = n.len;
+        if (cur > firstMax) {
+            secondMax = firstMax;
+            firstMax = cur;
+        } else if (cur > secondMax) {
+            secondMax = cur;
         }
-        return sb.toString();
     }
 
-    public static void main(String[] args) {
-        String str = "aaaaabcccbb";
-        System.out.println(findSolution(str));
+    maxLen = firstMax + secondMax;
+
+    for (int i = 1; i < list.size() - 1; i++) {
+        Node prev = list.get(i - 1);
+        Node next = list.get(i + 1);
+        if (prev.val == next.val) {
+            Node cur = list.get(i);
+            maxLen = Math.max(maxLen, prev.len + cur.len + next.len);
+        }
     }
+
+    return s.length() - maxLen;
 }
